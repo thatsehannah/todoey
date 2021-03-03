@@ -10,11 +10,14 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        loadItems()
+        
     }
     
     //MARK: - Tableview Datasource Methods
@@ -25,7 +28,11 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.isCompleted ? .checkmark : .none
+           
         return cell
     }
     
@@ -33,11 +40,12 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        let item = itemArray[indexPath.row]
+        let isItemCompleted = itemArray[indexPath.row].isCompleted
+        
+        item.isCompleted = !isItemCompleted
+        
+        saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -55,10 +63,11 @@ class TodoListViewController: UITableViewController {
             //what will happen once the user clicks the Add Item button on our UIAlert
             
             if textField.text != "" {
-                self.itemArray.append(textField.text!)
+                let newItem = Item()
+                newItem.title = textField.text!
+                self.itemArray.append(newItem)
                 
-                //UITableViewController automatically loads the table view archived in a storyboard or nib file. Access the table view using the "tableView" property.
-                self.tableView.reloadData()
+                self.saveItems()
             }
             
         }
@@ -70,6 +79,34 @@ class TodoListViewController: UITableViewController {
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+    }
+    
+    //Encoding our array of custom objects into data that can be written into a plist
+    func saveItems() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        //UITableViewController automatically loads the table view archived in a storyboard or nib file. Access the table view using the "tableView" property.
+        //this will trigger the cellForRowAt method
+        self.tableView.reloadData()
+    }
+    
+    //Decodes the data from the plist into the form of an array of items
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item array, \(error)")
+            }
+            
+        }
     }
 }
 

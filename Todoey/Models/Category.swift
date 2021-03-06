@@ -1,5 +1,5 @@
 //
-//  TestData.swift
+//  Category.swift
 //  Todoey
 //
 //  Created by Elliot Hannah III on 3/5/21.
@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class RealmTest: Object {
+class Category: Object {
     @objc dynamic var name: String = ""
-    @objc dynamic var age: Int = 0
+    let items = List<Item>()
 }

@@ -8,11 +8,12 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
+    let realm = try! Realm()
     var categoryArray = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,10 +27,10 @@ class CategoryViewController: UITableViewController {
         var textField = UITextField()
         let action = UIAlertAction(title: "Add Category", style: .default) { (alertAction) in
             
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
             self.categoryArray.append(newCategory)
-            self.saveCategory()
+            self.save(category: newCategory)
             
         }
         
@@ -72,9 +73,11 @@ class CategoryViewController: UITableViewController {
     
     //MARK: - Data Manipulation Methods
     
-    func saveCategory() {
+    func save(category: Category) {
         do {
-            try self.context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print("Error saving category, \(error.localizedDescription)")
         }
@@ -83,13 +86,13 @@ class CategoryViewController: UITableViewController {
     }
     
     func loadCategories() {
-        let request: NSFetchRequest<Category> = Category.fetchRequest() //gets all categories fro db
-        do {
-            categoryArray = try self.context.fetch(request)
-        } catch {
-            print("Error retrieving categories, \(error.localizedDescription)")
-        }
-        
-        tableView.reloadData()
+//        let request: NSFetchRequest<Category> = Category.fetchRequest() //gets all categories fro db
+//        do {
+//            categoryArray = try self.context.fetch(request)
+//        } catch {
+//            print("Error retrieving categories, \(error.localizedDescription)")
+//        }
+//        
+//        tableView.reloadData()
     }
 }

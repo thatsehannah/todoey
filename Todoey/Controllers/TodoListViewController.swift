@@ -7,17 +7,19 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListViewController: UITableViewController {
 
-    var itemArray = [Item]()
+    var todoItems: Results<Item>?
+    let realm = try! Realm()
+    
     var selectedCategory: Category? {
         didSet {
-            //loadItems()
+            loadItems()
+            self.title = selectedCategory?.name
         }
     }
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,15 +28,19 @@ class TodoListViewController: UITableViewController {
     //MARK: - Tableview Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoItems?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.todoItemCellIdentifier, for: indexPath)
-        let item = itemArray[indexPath.row]
+        if let item = todoItems?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.isCompleted ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Items Added"
+        }
         
-        cell.textLabel?.text = item.title
-        cell.accessoryType = item.isCompleted ? .checkmark : .none
+        
            
         return cell
     }
@@ -43,12 +49,12 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let item = itemArray[indexPath.row]
-        let isItemCompleted = itemArray[indexPath.row].isCompleted
+        let item = todoItems?[indexPath.row]
+        let isItemCompleted = todoItems?[indexPath.row].isCompleted
         
-        item.isCompleted = !isItemCompleted
-        
-        saveItems()
+//        item.isCompleted = !isItemCompleted ?? false
+//
+//        saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -64,15 +70,12 @@ class TodoListViewController: UITableViewController {
             //what will happen once the user clicks the Add Item button on our UIAlert
             
             if textField.text != "" {
-                
-//                let newItem = Item(context: self.context)
-//                newItem.title = textField.text!
-//                newItem.isCompleted = false
-//                newItem.parentCategory = self.selectedCategory
-//                self.itemArray.append(newItem)
-                
-                self.saveItems()
+                let newItem = Item()
+                newItem.title = textField.text!
+                self.save(item: newItem)
             }
+            
+            self.tableView.reloadData()
         }
         
         alert.addTextField { (alertTextField) in
@@ -85,36 +88,28 @@ class TodoListViewController: UITableViewController {
     }
     
     
-    func saveItems() {
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context, \(error)")
+    func save(item: Item) {
+        if let currentCategory = selectedCategory {
+            do {
+                try realm.write {
+                    currentCategory.items.append(item)
+                }
+            } catch {
+                print("Error saving context, \(error)")
+            }
         }
+        
         
         //UITableViewController automatically loads the table view archived in a storyboard or nib file. Access the table view using the "tableView" property.
         //this will trigger the cellForRowAt method
         tableView.reloadData()
     }
     
-//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), additionalPredicate: NSPredicate? = nil) {
-//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-//
-//        if let safeAdditionalPredicate = additionalPredicate {
-//            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, safeAdditionalPredicate])
-//            request.predicate = compoundPredicate
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//
-//        do {
-//            itemArray = try context.fetch(request)
-//        } catch {
-//            print("Error fetching data from context \(error)")
-//        }
-//
-//        tableView.reloadData()
-//    }
+    func loadItems() {
+        todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+
+        tableView.reloadData()
+    }
 }
 
 //MARK: - Search bar methods

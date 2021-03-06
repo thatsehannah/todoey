@@ -9,7 +9,6 @@
 import Foundation
 
 struct K {
-    static let categoryCellIdentifier = "CategoryCell"
-    static let todoItemCellIdentifier = "ToDoItemCell"
+    static let tableViewCellIdentifier = "Cell"
     static let itemSegue = "goToItems"
 }

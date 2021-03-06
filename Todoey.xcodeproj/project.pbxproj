@@ -17,6 +17,7 @@
 		F728574225F327BC00AE10C4 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = F728574125F327BC00AE10C4 /* Category.swift */; };
 		F77518E725F18187004FC49E /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F77518E625F18187004FC49E /* CategoryViewController.swift */; };
 		F7C8440625F18796004560CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C8440525F18796004560CA /* Constants.swift */; };
+		F7E7887225F35610001F219F /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E7887125F35610001F219F /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		F728574125F327BC00AE10C4 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		F77518E625F18187004FC49E /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		F7C8440525F18796004560CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F7E7887125F35610001F219F /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			children = (
 				F77518E625F18187004FC49E /* CategoryViewController.swift */,
 				EB2BE4FD239524DB00FB933B /* TodoListViewController.swift */,
+				F7E7887125F35610001F219F /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				F728573F25F327AA00AE10C4 /* Item.swift in Sources */,
 				F7C8440625F18796004560CA /* Constants.swift in Sources */,
 				F77518E725F18187004FC49E /* CategoryViewController.swift in Sources */,
+				F7E7887225F35610001F219F /* SwipeTableViewController.swift in Sources */,
 				EB2BE4FE239524DB00FB933B /* TodoListViewController.swift in Sources */,
 				EB2BE4FA239524DB00FB933B /* AppDelegate.swift in Sources */,
 				F728574225F327BC00AE10C4 /* Category.swift in Sources */,

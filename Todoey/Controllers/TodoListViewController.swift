@@ -39,9 +39,7 @@ class TodoListViewController: UITableViewController {
         } else {
             cell.textLabel?.text = "No Items Added"
         }
-        
-        
-           
+
         return cell
     }
     

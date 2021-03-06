@@ -52,7 +52,8 @@ class TodoListViewController: UITableViewController {
         if let item = todoItems?[indexPath.row] {
             do {
                 try realm.write {
-                    item.isCompleted.toggle()
+                    realm.delete(item)
+//                    item.isCompleted.toggle()
                 }
             } catch {
                 print("Error saving completion status, \(error)")

@@ -12,18 +12,42 @@ import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
 
+    //MARK: - Variables & IBOutlets
     var todoItems: Results<Item>?
     let realm = try! Realm()
     var selectedCategory: Category? {
         didSet {
             loadItems()
-            self.title = selectedCategory?.name
         }
     }
+    @IBOutlet weak var searchBar: UISearchBar!
     
+    //MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory!.name
+        tableView.tintColor = FlatWhite()
+        
+        if let colorHex = selectedCategory?.color {
+            guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist")}
+            let navBarAppearance = UINavigationBarAppearance()
+            
+            navBarAppearance.configureWithOpaqueBackground()
+            navBarAppearance.titleTextAttributes = [.foregroundColor: FlatWhite()]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: FlatWhite()]
+            navBarAppearance.backgroundColor = UIColor(hexString: colorHex)
+            
+            navBar.tintColor = FlatWhite()
+            navBar.standardAppearance = navBarAppearance
+            navBar.scrollEdgeAppearance = navBarAppearance
+            
+            searchBar.barTintColor = UIColor(hexString: colorHex)
+            searchBar.searchTextField.backgroundColor = FlatWhite()
+        }
     }
     
     //MARK: - Tableview Datasource Methods
@@ -34,7 +58,8 @@ class TodoListViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        if let item = todoItems?[indexPath.row] {
+        if todoItems!.count > 0 {
+            guard let item = todoItems?[indexPath.row] else {fatalError()}
             cell.textLabel?.text = item.title
             cell.accessoryType = item.isCompleted ? .checkmark : .none
             
@@ -68,6 +93,7 @@ class TodoListViewController: SwipeTableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
     
     //MARK: - Add New Items
     

@@ -24,23 +24,11 @@ class CategoryViewController: SwipeTableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let backgroundColor = UIColor(hexString: "1D9BF6") {
-            guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist")}
-            let navBarAppearance = UINavigationBarAppearance()
-            
-            navBarAppearance.configureWithOpaqueBackground()
-            navBarAppearance.titleTextAttributes = [.foregroundColor: FlatWhite()]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: FlatWhite()]
-            navBarAppearance.backgroundColor = backgroundColor
-            
-            navBar.tintColor = FlatWhite()
-            navBar.standardAppearance = navBarAppearance
-            navBar.scrollEdgeAppearance = navBarAppearance
-            
-        }
+        updateNavBar(backgroundColor: FlatYellow())
     }
     
     //MARK: - Add New Category
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         let newCategoryAlert = UIAlertController(title: "Add New Todoey Category", message: "", preferredStyle: .alert)
         var textField = UITextField()
@@ -51,7 +39,6 @@ class CategoryViewController: SwipeTableViewController {
             newCategory.color = UIColor.randomFlat().hexValue()
             
             self.save(category: newCategory)
-            
         }
         
         newCategoryAlert.addTextField { (alertTextField) in
@@ -116,7 +103,7 @@ class CategoryViewController: SwipeTableViewController {
         tableView.reloadData()
     }
     
-    //MARK: - Delete Data From Swipe
+    //MARK: - Delete Category
     
     override func updateModel(at indexPath: IndexPath) {
         if let category = self.categories?[indexPath.row] {

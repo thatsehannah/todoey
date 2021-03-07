@@ -9,6 +9,7 @@
 import UIKit
 import SwipeCellKit
 import RealmSwift
+import ChameleonFramework
 
 class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegate {
 
@@ -34,11 +35,9 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         guard orientation == .right else { return nil }
 
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            self.updateModel(at: indexPath)
-//            
+            self.updateModel(at: indexPath)       
         }
 
-        // customize the action appearance
         deleteAction.image = UIImage(systemName: "trash")
 
         return [deleteAction]
@@ -54,8 +53,19 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     func updateModel(at indexPath: IndexPath) {
         print("Item deleted from superclass")
     }
-
-
     
-
+    func updateNavBar(backgroundColor: UIColor) {
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("Navigation Controller does not exist")
+        }
+        let contrastOfBackgroundColor = ContrastColorOf(backgroundColor, returnFlat: true)
+        
+        navBar.barTintColor = backgroundColor
+        navBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : contrastOfBackgroundColor]
+        
+        navBar.backgroundColor = backgroundColor
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : contrastOfBackgroundColor]
+        
+        navBar.tintColor = contrastOfBackgroundColor
+    }
 }
